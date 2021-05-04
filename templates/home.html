@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <title>University Of Jordan</title>
+    <style>
+        #page-site-index.notloggedin #page {
+            padding: 0;
+            background-color: #fff;
+        }
+        #page-wrapper #page {
+            flex: 1 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+        #page-site-index.notloggedin #page-header {
+            background-image: url('../img/uni.JPG') ;
+
+        }
+
+        #page-site-index.notloggedin #page-header {
+            background-position: left top;
+            background-repeat: no-repeat;
+            background-color: #fff;
+            background-size: 100%;
+            min-height: 540px;
+            padding: 0 4rem;
+        }
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        div {
+            display: block;
+        }
+        body.notloggedin #loginbox .sign-up-btn .btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            margin-left: 0;
+            font-size: 1.3rem;
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+        .btn:not(:disabled):not(.disabled) {
+            cursor: pointer;
+        }
+        .btn-primary {
+            color: #fff;
+            background-color: #0f6fc5;
+            border-color: #0f6fc5;
+        }
+
+        button, [type="button"], [type="reset"], [type="submit"] {
+            -webkit-appearance: button;
+        }
+        button, select {
+            text-transform: none;
+        }
+        button, input {
+            overflow: visible;
+        }
+        body.notloggedin #loginbox #intro h1 {
+            color: #fff;
+            letter-spacing: .2rem;
+            text-shadow: 2px 4px 4px #000;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        body.notloggedin #loginbox #intro h2 {
+            color: #fff;
+            text-shadow: 1px 1px 1px #000;
+            letter-spacing: .1rem;
+            max-width: 80%;
+        }
+        h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+            color: #455a64;
+            font-family: "Poppins",sans-serif;
+            font-weight: 400;
+        }
+        @media (max-width: 1200px) {
+            .h2, .h2 {
+                font-size: calc(0.9975rem + 1.17vw);
+            }
+
+            body.notloggedin #loginbox #boxForm {
+                background-color: #fff;
+                color: #5a5a5a;
+                margin-top: 10rem;
+                text-align: left;
+                opacity: 1;
+            }
+        }
+        .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col, .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm, .col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md, .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg, .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl, .col-xl-auto {
+            position: relative;
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+        .card {
+            border-color: #d7dfe3;
+            border-radius: 0;
+        }
+        .card {
+            -webkit-background-clip: border-box;
+        }
+
+        .card {
+            margin-top: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: rgba(255, 255, 255,0.9);
+            background-clip: border-box;
+            border: 1px solid #d7dfe3;
+            max-height: 450px;
+        }
+        @media (min-width: 768px) {
+            .col-md-5 {
+                flex: 0 0 41.6666666667%;
+                max-width: 41.6666666667%;
+            }
+        }
+    </style>
+</head>
+<body id="page-site-index" class="format-site course path-site chrome dir-ltr lang-en yui-skin-sam yui3-skin-sam elearning-ju-edu-jo--moodle10 pagelayout-frontpage course-1 context-2 notloggedin  jsenabled">
+<nav class="navbar navbar-light bg-light" style="padding-bottom: 0px;padding-top: 0px">
+    <span class="navbar-brand mb-0 h1"><img src="//elearning.ju.edu.jo/moodle10/pluginfile.php/1/theme_moove/logo/1617802299/ju%20%281%29%20%281%29.png" alt="UJ E-Learning Portal" height="80px" width="60px"></span>
+</nav>
+
+<div id="page" class="container-fluid">
+    <div id="page-header" class="frontpage-guest-header">
+
+
+        <div class="row" id="loginbox">
+            <div class="col-sm-12 hidden-sm-down col-md-7" id="intro">
+                <h1>        Welcome to the University of Jordan E-Learning System  </h1>
+                <h2>  The University of Jordan’s E-learning System implements the university’s objective of developing an interactive and innovative blended learning through the exploiting of the state of the art Information and Telecommunication Technologies. It promotes online learning as an essential part of our everyday teaching and learning practices. It recognizes the potential of e-learning to impact on learning outcomes for all students and the work habits of all staff. </h2>
+            </div>
+            <div class="col-12 col-sm-12 col-md-5 card d-none d-lg-block" id="boxForm">
+                <div class="card-body">
+                    <h3>Access to the platform</h3>
+                    <form class="signup-form" method="post" action="{% url 'graduation:login' %}" role="form">
+                        {% csrf_token %}
+                        <label for="username">
+                            Username
+                        </label>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-envelope add-on"></i></div>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Username" required="">
+                        </div>
+
+                        <label for="password">Password</label>
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-lock add-on"></i></div>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required="">
+                        </div>
+
+                        <div class="sign-up-btn">
+                            <button type="submit" class="btn btn-primary">Log in</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div><!-- end of .card-body -->
+        </div> <!-- end of #boxForm -->
+    </div>
+    <div class="container frontpage-maincontent">
+        <div role="main"><span id="user-notifications"></span><span id="maincontent"></span><div class="box py-3 generalbox sitetopic"><ul class="section img-text"></ul></div><br></div>
+    </div>
+
+
+</div>
+</body>
+</html>

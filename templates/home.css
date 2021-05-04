@@ -1,0 +1,115 @@
+       #page-site-index.notloggedin #page {
+    padding: 0;
+    background-color: #fff;
+    margin-top: 70px;
+}
+        #page-wrapper #page {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+#page-site-index.notloggedin #page-header {
+    background-image: url('../img/uni.JPG') ;
+
+}
+
+#page-site-index.notloggedin #page-header {
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-color: #fff;
+    background-size: 100%;
+    min-height: 540px;
+    padding: 0 4rem;
+}
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+div {
+    display: block;
+}
+body.notloggedin #loginbox .sign-up-btn .btn {
+    padding: 10px 20px;
+    margin-left: 0;
+    font-size: 1.3rem;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+.btn:not(:disabled):not(.disabled) {
+    cursor: pointer;
+}
+.btn-primary {
+    color: #fff;
+    background-color: #0f6fc5;
+    border-color: #0f6fc5;
+}
+
+button, [type="button"], [type="reset"], [type="submit"] {
+    -webkit-appearance: button;
+}
+button, select {
+    text-transform: none;
+}
+button, input {
+    overflow: visible;
+}
+body.notloggedin #loginbox #intro h1 {
+    color: #fff;
+    letter-spacing: .2rem;
+    text-shadow: 2px 4px 4px #000;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+        body.notloggedin #loginbox #intro h2 {
+    color: #fff;
+    text-shadow: 1px 1px 1px #000;
+    letter-spacing: .1rem;
+    max-width: 80%;
+}
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+    color: #455a64;
+    font-family: "Poppins",sans-serif;
+    font-weight: 400;
+}
+@media (max-width: 1200px) {
+    .h2, .h2 {
+        font-size: calc(0.9975rem + 1.17vw);
+    }
+
+    body.notloggedin #loginbox #boxForm {
+        background-color: #fff;
+        color: #5a5a5a;
+        margin-top: 1rem;
+        text-align: left;
+        opacity: 1;
+    }
+}
+        .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col, .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm, .col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md, .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg, .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl, .col-xl-auto {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.card {
+    border-color: #d7dfe3;
+    border-radius: 0;
+}
+.card {
+    -webkit-background-clip: border-box;
+}
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid #d7dfe3;
+}
+@media (min-width: 768px)
+.col-md-5 {
+    flex: 0 0 41.6666666667%;
+    max-width: 41.6666666667%;
+}
