@@ -50,3 +50,22 @@ class Project(models.Model):
 
     def getGroupeMembers(self):
         return self.group_members
+
+
+class Meeting(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project_supervisor = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    date = models.CharField(max_length=100 ,null=True, blank=True)
+    status_selection = [
+        ('Pending', 'Pending'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected')
+    ]
+    status = models.CharField(max_length=9, choices=status_selection, default='Pending')
+
+
+class ProgressReport(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project_supervisor = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    report = models.FileField(upload_to='documents/%Y/%m/%d')

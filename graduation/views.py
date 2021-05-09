@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.models import User as SuperUser
 from django.contrib import auth
+from django.contrib.auth import authenticate, login, logout
 # Create your views here.
-from graduation.models import *
+from .models import *
 from django.contrib import messages
 
 
@@ -22,13 +23,28 @@ def landing_view(request):
     return render(request, "home.html")
 
 
+def logoutUser(request):
+    logout(request)
+    return render(request, "home.html")
+
+
 def login_View(request):
-    # request.session["is_Logged_in"] = False
+    request.session["is_Logged_in"] = False
 
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
         user = auth.authenticate(username=username, password=password)
+        teacher = Teacher.objects.filter(username=user)
+        student = Student.objects.filter(username=user)
+
+        if (len(teacher) > 0):
+            teacher = teacher[0]
+            project_requests = Project.objects.filter(project_supervisor=teacher)
+            meetings = Meeting.objects.filter(project_supervisor=teacher)
+            reports = ProgressReport.objects.filter(project_supervisor=teacher)
+            context = {'requests': list(project_requests.values()), 'meetings': meetings, 'reports': reports}
+            return render(request, 'teacher-profile.html', context)
 
         # request.session["is_Logged_in"] = False
         if user is not None:
@@ -43,6 +59,7 @@ def login_View(request):
             request.session["username"] = username
             request.session["user_pk"] = consumer.pk
             request.session["is_teacher"] = user.is_staff
+
             if len(project) > 0:
                 request.session["project_id"] = project[0].pk
                 project = project[0]
@@ -51,10 +68,12 @@ def login_View(request):
             full_name = u"{} {}".format(consumer.first_name, consumer.last_name)
             request.session["full_name"] = str(full_name)
             available_teachers = get_available_teachers()
+            projects = Project.objects.all()
 
             return render(request, 'index.html',
                           {'username': user.username, 'full_name': full_name, 'user_pk': user.pk,
-                           'consumer': consumer, 'project': project, 'available_teachers': available_teachers,'error': ''})
+                           'consumer': consumer, 'project': project, 'available_teachers': available_teachers,
+                           'error': '', 'projects': projects})
         else:
             messages.info(request, "invalid credentials")
             return redirect("/")
@@ -79,7 +98,7 @@ def login_View(request):
                 return render(request, 'index.html',
                               {'username': user.username, 'full_name': full_name,
                                'available_teachers': available_teachers,
-                               'consumer': consumer, 'project': project, 'group_members': group,'error': ''})
+                               'consumer': consumer, 'project': project, 'group_members': group, 'error': ''})
         return render(request, 'home.html', )
 
 
@@ -91,20 +110,10 @@ def get_available_teachers():
     teachers = list(Teacher.objects.all().values())
     for t in teachers:
         teacher_project_dict[t['id']] = 0
-        p1 = False
-        p2 = False
+
     for p in projects:
-
-        if p.project_degree == 1:
-            p1 = True
-        else:
-            p2 = True
-
         for t in p.project_supervisor.all().values():
-            if p1 and p2:
-                pass
-            else:
-                not_av.append(Teacher.objects.get(pk=t['id']))
+            not_av.append(Teacher.objects.get(pk=t['id']))
             teacher_project_dict[t['id']] += 1
 
     teacher_project_id_list = [x for x in teacher_project_dict]
@@ -147,7 +156,7 @@ def RegisterUser(request):
 def apply_for_supervisor(request):
     if request.method == "POST":
         # receiving data
-        error=''
+        error = ''
         try:
             supervisor = request.POST['supervisor']
             project_title = request.POST['project-title']
@@ -162,7 +171,7 @@ def apply_for_supervisor(request):
         try:
             supervisor = Teacher.objects.get(id=supervisor)
             num_of_projects = Project.objects.filter(project_supervisor=supervisor.pk)
-            if len(num_of_projects) >= 3:
+            if len(num_of_projects) >= 5:
                 messages.add_message(request, messages.INFO, 'this teacher cannot accept more projects, his load is '
                                                              'full :(')
                 return redirect('/')
@@ -186,3 +195,82 @@ def apply_for_supervisor(request):
 
             return redirect('/')
     return redirect('/')
+
+
+def acceptProject(request, pk):
+    if request.method == 'GET':
+        print(request.user)
+        project = Project.objects.get(id=pk)
+        project.status = 'Approved'
+        project.save()
+        teacher = Teacher.objects.filter(username=request.user)
+        teacher = teacher[0]
+        print(teacher)
+        project_requests = Project.objects.filter(project_supervisor=teacher)
+        print(project_requests)
+        context = {'requests': list(project_requests.values())}
+
+    return render(request, 'teacher-profile.html', context)
+
+
+def rejectProject(request, pk):
+    context = {}
+    if request.method == 'GET':
+        project = Project.objects.get(id=pk)
+        project.status = 'Rejected'
+        project.save()
+        teacher = Teacher.objects.filter(username=request.user)
+        teacher = teacher[0]
+        project_requests = Project.objects.filter(project_supervisor=teacher)
+        context = {'requests': list(project_requests.values())}
+
+    return render(request, 'teacher-profile.html', context)
+
+
+def acceptMeeting(request, pk):
+    if request.method == 'GET':
+        print(request.user)
+        meeting = Meeting.objects.get(id=pk)
+        meeting.status = 'Approved'
+        meeting.save()
+        teacher = Teacher.objects.filter(username=request.user)
+        teacher = teacher[0]
+        print(teacher)
+        project_requests = Project.objects.filter(project_supervisor=teacher)
+        meetings = Meeting.objects.filter(project_supervisor=teacher)
+        print(project_requests)
+        context = {'requests': list(project_requests.values()), 'meetings': meetings}
+
+    return render(request, 'teacher-profile.html', context)
+
+
+def rejectMeeting(request, pk):
+    context = {}
+    if request.method == 'GET':
+        meeting = Meeting.objects.get(id=pk)
+        meeting.status = 'Rejected'
+        meeting.save()
+        teacher = Teacher.objects.filter(username=request.user)
+        teacher = teacher[0]
+        project_requests = Project.objects.filter(project_supervisor=teacher)
+        meetings = Meeting.objects.filter(project_supervisor=teacher)
+        print(project_requests)
+        context = {'requests': list(project_requests.values()), 'meetings': meetings}
+
+    return render(request, 'teacher-profile.html', context)
+
+
+def requestMeeting(request):
+    if request.method == "POST":
+        # receiving data
+        error = ''
+        try:
+            supervisor = request.POST['supervisor']
+            project = request.POST['project']
+            date_0 = request.POST['date_0']
+            date_1 = request.POST['date_1']
+            meeting = Meeting.objects.create(project=project, project_supervisor=supervisor, date=f'{date_0}, {date_1}')
+            meeting.save()
+        except:
+            messages.add_message(request, messages.INFO, 'error while receiving data')
+            return redirect('/')
