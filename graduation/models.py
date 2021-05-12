@@ -43,7 +43,7 @@ class Project(models.Model):
         ('Approved', 'Approved'),
         ('Rejected', 'Rejected')
     ]
-    status = models.CharField(max_length=9, choices=status_selection,default='Pending')
+    status = models.CharField(max_length=9, choices=status_selection, default='Pending')
 
     def __str__(self):
         return self.project_title
@@ -54,8 +54,8 @@ class Project(models.Model):
 
 class Meeting(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    project_supervisor = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    date = models.CharField(max_length=100 ,null=True, blank=True)
+    project_supervisor = models.ManyToManyField(to=Teacher)
+    date = models.CharField(max_length=100, null=True, blank=True)
     status_selection = [
         ('Pending', 'Pending'),
         ('Approved', 'Approved'),
@@ -63,9 +63,15 @@ class Meeting(models.Model):
     ]
     status = models.CharField(max_length=9, choices=status_selection, default='Pending')
 
+    def __str__(self):
+        return self.project.project_title
 
 class ProgressReport(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    project_supervisor = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    project_supervisor = models.ManyToManyField(to=Teacher)
+    date = models.DateTimeField(auto_now_add=True)
+    teacher_replay = models.TextField(null=True, blank=True)
     report = models.FileField(upload_to='documents/%Y/%m/%d')
+
+    def __str__(self):
+        return self.project.project_title

@@ -16,6 +16,8 @@ urlpatterns = [
     path('accept_meeting/<int:pk>/', acceptMeeting, name="accept-meeting"),
     path('reject_meeting/<int:pk>/', rejectMeeting, name="reject-meeting"),
     path('request_meeting/', requestMeeting, name="request-meeting"),
+    path('ReplayToProgressReport/', ReplayToProgressReport, name="ReplayToProgressReport"),
+    path('ApplayForProgressReport/', ApplayForProgressReport, name="ApplayForProgressReport"),
 
 ]
 

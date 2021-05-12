@@ -29,20 +29,28 @@ def logoutUser(request):
 
 
 def login_View(request):
-    request.session["is_Logged_in"] = False
+    # request.session["is_Logged_in"] = False
 
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
         user = auth.authenticate(username=username, password=password)
+        if user is not None:
+            auth.login(request, user)
+        else:
+            return redirect('/')
+        request.session["is_Logged_in"] = True
+        request.session["username"] = username
         teacher = Teacher.objects.filter(username=user)
-        student = Student.objects.filter(username=user)
-
         if (len(teacher) > 0):
             teacher = teacher[0]
             project_requests = Project.objects.filter(project_supervisor=teacher)
             meetings = Meeting.objects.filter(project_supervisor=teacher)
             reports = ProgressReport.objects.filter(project_supervisor=teacher)
+            for i in reports:
+                i.report.link = i.report.name
+                i.report.name = i.report.name.split('/')
+                i.report.name = i.report.name[-1]
             context = {'requests': list(project_requests.values()), 'meetings': meetings, 'reports': reports}
             return render(request, 'teacher-profile.html', context)
 
@@ -51,54 +59,67 @@ def login_View(request):
             auth.login(request, user)
             try:
                 consumer = Student.objects.get(username=user)
+                request.session["user_pk"] = consumer.pk
+
                 project = Project.objects.filter(group_members=consumer)
             except:
                 print("invalid credentials")
                 return redirect("/")
-            request.session["is_Logged_in"] = True
-            request.session["username"] = username
-            request.session["user_pk"] = consumer.pk
-            request.session["is_teacher"] = user.is_staff
 
+            teachers = []
             if len(project) > 0:
                 request.session["project_id"] = project[0].pk
                 project = project[0]
+                teachers = project.project_supervisor.all()
             else:
                 project = ''
             full_name = u"{} {}".format(consumer.first_name, consumer.last_name)
             request.session["full_name"] = str(full_name)
             available_teachers = get_available_teachers()
-            projects = Project.objects.all()
 
             return render(request, 'index.html',
                           {'username': user.username, 'full_name': full_name, 'user_pk': user.pk,
                            'consumer': consumer, 'project': project, 'available_teachers': available_teachers,
-                           'error': '', 'projects': projects})
+                           'error': '', 'projects': '', 'teachers': teachers})
         else:
             messages.info(request, "invalid credentials")
             return redirect("/")
 
     else:
-        if 'is_Logged_in' in request.session:
+        if 'is_Logged_in' in request.session.keys():
             if request.session["is_Logged_in"]:
                 username = request.session["username"]
                 user = SuperUser.objects.get(username=username)
-                consumer = Student.objects.get(username=user)
+                try:
+                    consumer = Student.objects.get(username=user)
+                except:
+                    teacher = Teacher.objects.get(username=user)
+                    project_requests = Project.objects.filter(project_supervisor=teacher)
+                    meetings = Meeting.objects.filter(project_supervisor=teacher)
+                    reports = ProgressReport.objects.filter(project_supervisor=teacher)
+                    for i in reports:
+                        i.report.link = i.report.name
+                        i.report.name = i.report.name.split('/')
+                        i.report.name = i.report.name[-1]
+                    context = {'requests': list(project_requests.values()), 'meetings': meetings, 'reports': reports}
+                    return render(request, 'teacher-profile.html', context)
+
                 project = Project.objects.filter(group_members=consumer)
-                full_name = u"{} {}".format(consumer.first_name, consumer.last_name)
-                group = ''
+                teachers = []
                 if len(project) > 0:
+                    request.session["project_id"] = project[0].pk
                     project = project[0]
-                    group = list(project.getGroupeMembers().all().values())
-                    for i in group:
-                        i['index'] = group.index(i) + 1
+                    teachers = project.project_supervisor.all()
                 else:
                     project = ''
+                full_name = u"{} {}".format(consumer.first_name, consumer.last_name)
+                group = ''
                 available_teachers = get_available_teachers()
                 return render(request, 'index.html',
                               {'username': user.username, 'full_name': full_name,
                                'available_teachers': available_teachers,
-                               'consumer': consumer, 'project': project, 'group_members': group, 'error': ''})
+                               'consumer': consumer, 'project': project, 'group_members': group, 'error': '',
+                               'teachers': teachers})
         return render(request, 'home.html', )
 
 
@@ -190,6 +211,8 @@ def apply_for_supervisor(request):
                 student = Student.objects.get(st_num=student_num)
                 list_of_members.append(student.pk)
             project.group_members.set(list_of_members)
+            messages.add_message(request, messages.SUCCESS, 'Done, wait for your Teacher to respond !')
+
         except:
             messages.add_message(request, messages.INFO, 'error while applying request')
 
@@ -198,79 +221,92 @@ def apply_for_supervisor(request):
 
 
 def acceptProject(request, pk):
-    if request.method == 'GET':
-        print(request.user)
-        project = Project.objects.get(id=pk)
-        project.status = 'Approved'
-        project.save()
-        teacher = Teacher.objects.filter(username=request.user)
-        teacher = teacher[0]
-        print(teacher)
-        project_requests = Project.objects.filter(project_supervisor=teacher)
-        print(project_requests)
-        context = {'requests': list(project_requests.values())}
+    project = Project.objects.get(id=pk)
+    project.status = 'Approved'
+    project.save()
+    messages.add_message(request, messages.SUCCESS, 'the project has been rejected successfully')
 
-    return render(request, 'teacher-profile.html', context)
+    return redirect('/')
 
 
 def rejectProject(request, pk):
-    context = {}
-    if request.method == 'GET':
-        project = Project.objects.get(id=pk)
-        project.status = 'Rejected'
-        project.save()
-        teacher = Teacher.objects.filter(username=request.user)
-        teacher = teacher[0]
-        project_requests = Project.objects.filter(project_supervisor=teacher)
-        context = {'requests': list(project_requests.values())}
+    project = Project.objects.get(id=pk)
+    project.status = 'Rejected'
+    project.save()
+    messages.add_message(request, messages.SUCCESS, 'the project has been rejected successfully')
 
-    return render(request, 'teacher-profile.html', context)
+    return redirect('/')
 
 
 def acceptMeeting(request, pk):
-    if request.method == 'GET':
-        print(request.user)
-        meeting = Meeting.objects.get(id=pk)
-        meeting.status = 'Approved'
-        meeting.save()
-        teacher = Teacher.objects.filter(username=request.user)
-        teacher = teacher[0]
-        print(teacher)
-        project_requests = Project.objects.filter(project_supervisor=teacher)
-        meetings = Meeting.objects.filter(project_supervisor=teacher)
-        print(project_requests)
-        context = {'requests': list(project_requests.values()), 'meetings': meetings}
-
-    return render(request, 'teacher-profile.html', context)
+    meeting = Meeting.objects.get(id=pk)
+    meeting.status = 'Approved'
+    meeting.save()
+    messages.add_message(request, messages.SUCCESS, 'the meeting request has been accepted successfully')
+    return redirect('/')
 
 
 def rejectMeeting(request, pk):
-    context = {}
-    if request.method == 'GET':
-        meeting = Meeting.objects.get(id=pk)
-        meeting.status = 'Rejected'
-        meeting.save()
-        teacher = Teacher.objects.filter(username=request.user)
-        teacher = teacher[0]
-        project_requests = Project.objects.filter(project_supervisor=teacher)
-        meetings = Meeting.objects.filter(project_supervisor=teacher)
-        print(project_requests)
-        context = {'requests': list(project_requests.values()), 'meetings': meetings}
-
-    return render(request, 'teacher-profile.html', context)
+    meeting = Meeting.objects.get(id=pk)
+    meeting.status = 'Rejected'
+    meeting.save()
+    messages.add_message(request, messages.SUCCESS, 'the meeting request has been rejected successfully')
+    return redirect('/')
 
 
 def requestMeeting(request):
-    if request.method == "POST":
-        # receiving data
-        error = ''
-        try:
-            supervisor = request.POST['supervisor']
-            project = request.POST['project']
-            date_0 = request.POST['date_0']
-            date_1 = request.POST['date_1']
-            meeting = Meeting.objects.create(project=project, project_supervisor=supervisor, date=f'{date_0}, {date_1}')
-            meeting.save()
-        except:
-            messages.add_message(request, messages.INFO, 'error while receiving data')
-            return redirect('/')
+    try:
+        username = SuperUser.objects.get(username=request.session["username"])
+        date = request.POST.get('date-time')
+        student = Student.objects.get(username=username.pk)
+        project = Project.objects.get(group_members=student)
+        supervisor = project.project_supervisor.all()
+        meeting = Meeting.objects.create(project=project, date=date)
+        meeting.project_supervisor.set(supervisor)
+        meeting.save()
+        messages.add_message(request, messages.SUCCESS, 'Meeting request submitted successfully, wait for your doctor '
+                                                        'response')
+        return redirect('/')
+    except:
+        messages.add_message(request, messages.ERROR, 'something went wrong, try to contact your teacher !')
+        return redirect('/')
+
+
+def ReplayToProgressReport(request):
+    try:
+        teacher_replay = request.POST.get('teacher-replay')
+        project_id = request.POST.get('project-id')
+        project = ProgressReport.objects.get(id=project_id)
+        project.teacher_replay = teacher_replay
+        project.save()
+        messages.add_message(request, messages.SUCCESS, 'Your replay hase been saved successfully')
+        return redirect('/')
+    except:
+        messages.add_message(request, messages.INFO, 'error while receiving data')
+        return redirect('/')
+
+
+from django.core.files.storage import FileSystemStorage
+
+
+def ApplayForProgressReport(request):
+    # try:
+    username = SuperUser.objects.get(username=request.session["username"])
+    student = Student.objects.get(username=username.pk)
+    project = Project.objects.get(group_members=student)
+    supervisor = project.project_supervisor.all()
+    report = request.FILES['progressReport']
+    # fs = FileSystemStorage()
+    # filename = fs.save(myfile.name, myfile)
+
+    print(report)
+    progressReport = ProgressReport.objects.create(project=project)
+    progressReport.report = report
+    progressReport.project_supervisor.set(supervisor)
+    progressReport.save()
+    messages.add_message(request, messages.SUCCESS, 'Your Progress Report has been submitted successfully, '
+                                                    'wait for your doctor response')
+    return redirect('/')
+    # except Exception as e:
+    #     messages.add_message(request, messages.ERROR, 'something went wrong, try to contact your teacher !'+str(e))
+    #     return redirect('/')
