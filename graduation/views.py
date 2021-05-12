@@ -71,16 +71,19 @@ def login_View(request):
                 request.session["project_id"] = project[0].pk
                 project = project[0]
                 teachers = project.project_supervisor.all()
+                group =project.getGroupeMembers().values()
+
             else:
                 project = ''
+                group = ''
             full_name = u"{} {}".format(consumer.first_name, consumer.last_name)
             request.session["full_name"] = str(full_name)
-            available_teachers = get_available_teachers()
+            available_teachers = list(get_available_teachers())
 
             return render(request, 'index.html',
                           {'username': user.username, 'full_name': full_name, 'user_pk': user.pk,
                            'consumer': consumer, 'project': project, 'available_teachers': available_teachers,
-                           'error': '', 'projects': '', 'teachers': teachers})
+                           'error': '', 'projects': '', 'teachers': teachers,'group_members':group})
         else:
             messages.info(request, "invalid credentials")
             return redirect("/")
@@ -110,10 +113,13 @@ def login_View(request):
                     request.session["project_id"] = project[0].pk
                     project = project[0]
                     teachers = project.project_supervisor.all()
+                    group = list(project.getGroupeMembers().values())
+
                 else:
                     project = ''
+                    group = ''
                 full_name = u"{} {}".format(consumer.first_name, consumer.last_name)
-                group = ''
+
                 available_teachers = get_available_teachers()
                 return render(request, 'index.html',
                               {'username': user.username, 'full_name': full_name,

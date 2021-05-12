@@ -424,9 +424,11 @@
             <ul>
                 <li class="active"><a href="#hero"><i class="bx bx-home"></i> <span>Home</span></a></li>
                 <li><a href="#about"><i class="bx bx-book-content"></i> <span>Find Supervisor</span></a></li>
+                    {% if project != '' %}
+
                 <li><a href="#meeting"><i class="bx bx-file-blank"></i> <span>Request a Meeting</span></a></li>
                 <li><a href="#progress"><i class="bx bx-book-content"></i> Progress report</a></li>
-
+                    {% endif %}
                 <li><a href="{% url 'graduation:logout' %}">Logout</a></li>
             </ul>
         </nav><!-- .nav-menu -->
@@ -455,7 +457,8 @@
             </div>
         {% else %}
             <div class="hero-container" data-aos="fade-in">
-                <h2 style="color:#FFF"><span class="typed" data-typed-items="Sorry !!, You are not registered to this subject YET :/ ,See You Next Semester ;),Best Of Luck !!"></span></h2>
+{#                <h2 style="color:#FFF"><span class="typed" data-typed-items="Sorry !!, You are not registered to this subject YET :/ ,See You Next Semester ;),Best Of Luck !!"></span></h2>#}
+                <h2 style="color:#FFF"><span class="typed" data-typed-items="Sorry !!,You didn't have any registered project yet , try to apply for one !,Best Of Luck !!"></span></h2>
             </div>
         {% endif %}
     </div>
@@ -465,7 +468,7 @@
 
     <!-- ======= About Section ======= -->
     <section id="about" class="about">
- <div class="col-lg-12" style="align-content: center;justify-content: center;margin-top: 25px">
+        <div class="col-lg-12" style="align-content: center;justify-content: center;margin-top: 25px">
             {% if messages %}
                 {% for message in messages %}
                     {% if message.tags == 'success' %}
@@ -559,107 +562,110 @@
 
             </div>
     </section><!-- End About Section -->
+    {% if project != '' %}
 
-    <!-- ======= meeting Section ======= -->
-    <section id="meeting" class="facts">
-        <div class="container">
+        <!-- ======= meeting Section ======= -->
+        <section id="meeting" class="facts">
+            <div class="container">
 
-            <div class="section-title pr-3">
-                <h2>Request Meeting</h2>
+                <div class="section-title pr-3">
+                    <h2>Request Meeting</h2>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8 pt-4 pt-lg-0 content m-4" style="width: 100px;"
+                         data-aos="fade-left">
+                        <form class="signup-form" method="post" action="{% url 'graduation:request-meeting' %}" role="form">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <ul>
+                                        <li>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1">your supervisor/s</span>
+                                                </div>
+                                                <input  class="form-control" name="report"  value="{% for t in teachers %} {{ t.first_name }} {{ t.last_name }} || {% endfor %}" disabled/>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1">your project</span>
+                                                </div>
+                                                <input  class="form-control" name="report"  value="{{ project.project_title  }}" disabled/>
+                                            </div>
+
+                                        </li>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"  id="basic-addon1">Date - Time</span>
+                                            </div>
+                                            <input class="form-control" type="datetime-local" id="date-time" name="date-time">
+
+                                        </div>
+
+                                        </li>
+                                    </ul>
+                                    <button class="btn btn-primary">Request</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
             </div>
-            <div class="row">
-                <div class="col-lg-8 pt-4 pt-lg-0 content m-4" style="width: 100px;"
-                     data-aos="fade-left">
-                    <form class="signup-form" method="post" action="{% url 'graduation:request-meeting' %}" role="form">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <ul>
-                                    <li>
+        </section><!-- End Facts Section -->
+        <!-- ======= Skills Section ======= -->
+        <section id="progress" class="skills section-bg">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Upload your Progress report</h2>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8 pt-4 pt-lg-0 content m-4" style="width: 100px;"
+                         data-aos="fade-left">
+                        <form class="signup-form" method="POST" action="{% url 'graduation:ApplayForProgressReport' %}" role="form" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <ul>
                                         <div class="input-group mb-3">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text" id="basic-addon1">your supervisor/s</span>
                                             </div>
                                             <input  class="form-control" name="report"  value="{% for t in teachers %} {{ t.first_name }} {{ t.last_name }} || {% endfor %}" disabled/>
                                         </div>
-                                    </li>
-                                    <li>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="basic-addon1">your project</span>
+                                        </li>
+                                        <li>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1">your project</span>
+                                                </div>
+                                                <input  class="form-control" name="report"  value="{{ project.project_title  }}" disabled/>
                                             </div>
-                                            <input  class="form-control" name="report"  value="{{ project.project_title  }}" disabled/>
-                                        </div>
 
-                                    </li>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"  id="basic-addon1">Date - Time</span>
-                                        </div>
-                                        <input class="form-control" type="datetime-local" id="date-time" name="date-time">
-
-                                    </div>
-
-                                    </li>
-                                </ul>
-                                <button class="btn btn-primary">Request</button>
+                                        </li>
+                                        <li>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon1">Report</span>
+                                                </div>
+                                                <input type="file" class="form-control" name="progressReport" id="progressReport"/>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <button class="btn btn-primary">Upload</button>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
+
             </div>
-        </div>
-    </section><!-- End Facts Section -->
-
-    <!-- ======= Skills Section ======= -->
-    <section id="progress" class="skills section-bg">
-        <div class="container">
-            <div class="section-title">
-                <h2>Upload your Progress report</h2>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-8 pt-4 pt-lg-0 content m-4" style="width: 100px;"
-                     data-aos="fade-left">
-                    <form class="signup-form" method="POST" action="{% url 'graduation:ApplayForProgressReport' %}" role="form" enctype="multipart/form-data">
-                        {% csrf_token %}
-
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <ul>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">your supervisor/s</span>
-                                        </div>
-                                        <input  class="form-control" name="report"  value="{% for t in teachers %} {{ t.first_name }} {{ t.last_name }} || {% endfor %}" disabled/>
-                                    </div>
-                                    </li>
-                                    <li>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="basic-addon1">your project</span>
-                                            </div>
-                                            <input  class="form-control" name="report"  value="{{ project.project_title  }}" disabled/>
-                                        </div>
-
-                                    </li>
-                                    <li>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="basic-addon1">Report</span>
-                                            </div>
-                                            <input type="file" class="form-control" name="progressReport" id="progressReport"/>
-                                        </div>
-                                    </li>
-                                </ul>
-                                <button class="btn btn-primary">Upload</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section><!-- End Skills Section -->
+        </section><!-- End Skills Section -->
+    {% endif %}
     </div>
 
 
