@@ -23,6 +23,7 @@
         }
         #page-site-index.notloggedin #page-header {
             background-image: url('../img/uni.JPG') ;
+            height: 100%;
 
         }
 
@@ -143,10 +144,10 @@
 
         <div class="row" id="loginbox">
             <div class="col-sm-12 hidden-sm-down col-md-7" id="intro">
-                <h1>        Welcome to the University of Jordan E-Learning System  </h1>
-                <h2>  The University of Jordan’s E-learning System implements the university’s objective of developing an interactive and innovative blended learning through the exploiting of the state of the art Information and Telecommunication Technologies. It promotes online learning as an essential part of our everyday teaching and learning practices. It recognizes the potential of e-learning to impact on learning outcomes for all students and the work habits of all staff. </h2>
+                <h1 style="font-size: 2.5vw;">Welcome to the University of Jordan Graduation Projects System  </h1>
+                <h2 style="font-size: 1.5vw;">  The University of Jordan’s E-learning System implements the university’s objective of developing an interactive and innovative blended learning through the exploiting of the state of the art Information and Telecommunication Technologies. It promotes online learning as an essential part of our everyday teaching and learning practices. It recognizes the potential of e-learning to impact on learning outcomes for all students and the work habits of all staff. </h2>
             </div>
-            <div class="col-12 col-sm-12 col-md-5 card d-none d-lg-block" id="boxForm">
+            <div class="col-12 col-sm-12 col-md-5 card d-lg-block" id="boxForm">
                 <div class="card-body">
                     <h3>Access to the platform</h3>
                     <form class="signup-form" method="post" action="{% url 'graduation:login' %}" role="form">
