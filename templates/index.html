@@ -424,11 +424,11 @@
             <ul>
                 <li class="active"><a href="#hero"><i class="bx bx-home"></i> <span>Home</span></a></li>
                 <li><a href="#about"><i class="bx bx-book-content"></i> <span>Find Supervisor</span></a></li>
-                    {% if project != '' %}
+                {% if project != '' %}
 
-                <li><a href="#meeting"><i class="bx bx-file-blank"></i> <span>Request a Meeting</span></a></li>
-                <li><a href="#progress"><i class="bx bx-book-content"></i> Progress report</a></li>
-                    {% endif %}
+                    <li><a href="#meeting"><i class="bx bx-file-blank"></i> <span>Request a Meeting</span></a></li>
+                    <li><a href="#progress"><i class="bx bx-book-content"></i> Progress report</a></li>
+                {% endif %}
                 <li><a href="{% url 'graduation:logout' %}">Logout</a></li>
             </ul>
         </nav><!-- .nav-menu -->
@@ -457,7 +457,7 @@
             </div>
         {% else %}
             <div class="hero-container" data-aos="fade-in">
-{#                <h2 style="color:#FFF"><span class="typed" data-typed-items="Sorry !!, You are not registered to this subject YET :/ ,See You Next Semester ;),Best Of Luck !!"></span></h2>#}
+                {#                <h2 style="color:#FFF"><span class="typed" data-typed-items="Sorry !!, You are not registered to this subject YET :/ ,See You Next Semester ;),Best Of Luck !!"></span></h2>#}
                 <h2 style="color:#FFF"><span class="typed" data-typed-items="Sorry !!,You didn't have any registered project yet , try to apply for one !,Best Of Luck !!"></span></h2>
             </div>
         {% endif %}
@@ -596,17 +596,42 @@
                                             </div>
 
                                         </li>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"  id="basic-addon1">Date - Time</span>
-                                            </div>
-                                            <input class="form-control" type="datetime-local" id="date-time" name="date-time">
-
-                                        </div>
+                                        {#                                        <div class="input-group mb-3">#}
+                                        {#                                            <div class="input-group-prepend">#}
+                                        {#                                                <span class="input-group-text"  id="basic-addon1">Date - Time</span>#}
+                                        {#                                            </div>#}
+                                        {#                                            <input class="form-control" type="datetime-local" id="date-time" name="date-time">#}
+                                        {##}
+                                        {#                                        </div>#}
 
                                         </li>
                                     </ul>
                                     <button class="btn btn-primary">Request</button>
+                                </div>
+                                <div class="row">
+                                    <h2 class="m-3">Meeting Requests</h2>
+                                    <div class="container">
+                                        <table class="table mt-0">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Title</th>
+                                                <th scope="col">Time</th>
+                                                <th scope="col">Meeting Status</th>
+
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for m in meetings %}
+                                                <tr>
+                                                    <td>{{m.project}}</td>
+                                                    <td>{{m.date}}</td>
+                                                    <td>{{m.status}}</td>
+
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -662,8 +687,35 @@
                         </form>
                     </div>
                 </div>
-
+ <div class="row">
+                <h2 class="m-3">Progress Reports</h2>
+                <div class="col-lg-12 pt-4 pt-lg-0 content m-4" style="width: 100px;"
+                     data-aos="fade-left">
+                    <table class="table mt-0">
+                        <thead>
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Report</th>
+                            <th scope="col">View</th>
+                            <th scope="col">Replay</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for r in progress %}
+                            <tr>
+                                <td>{{r.project}}</td>
+                                <td><a href="img/{{ r.report.link }}">{{r.report.name}}</a></td>
+                                <td><a class="btn btn-success" href="img/{{ r.report.link }}">Download!</a></td>
+                                <td>{{ r.teacher_replay }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
+            </div>
+
+
         </section><!-- End Skills Section -->
     {% endif %}
     </div>

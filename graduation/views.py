@@ -60,7 +60,6 @@ def login_View(request):
             try:
                 consumer = Student.objects.get(username=user)
                 request.session["user_pk"] = consumer.pk
-
                 project = Project.objects.filter(group_members=consumer)
             except:
                 print("invalid credentials")
@@ -71,7 +70,7 @@ def login_View(request):
                 request.session["project_id"] = project[0].pk
                 project = project[0]
                 teachers = project.project_supervisor.all()
-                group =project.getGroupeMembers().values()
+                group = project.getGroupeMembers().values()
 
             else:
                 project = ''
@@ -79,11 +78,17 @@ def login_View(request):
             full_name = u"{} {}".format(consumer.first_name, consumer.last_name)
             request.session["full_name"] = str(full_name)
             available_teachers = list(get_available_teachers())
-
+            meetings = Meeting.objects.filter(project=project)
+            progress_reports = ProgressReport.objects.filter(project=project)
+            for i in progress_reports:
+                i.report.link = i.report.name
+                i.report.name = i.report.name.split('/')
+                i.report.name = i.report.name[-1]
             return render(request, 'index.html',
                           {'username': user.username, 'full_name': full_name, 'user_pk': user.pk,
                            'consumer': consumer, 'project': project, 'available_teachers': available_teachers,
-                           'error': '', 'projects': '', 'teachers': teachers,'group_members':group})
+                           'error': '', 'projects': '', 'teachers': teachers, 'group_members': group,
+                           'meetings': meetings, 'progress': progress_reports})
         else:
             messages.info(request, "invalid credentials")
             return redirect("/")
@@ -121,11 +126,17 @@ def login_View(request):
                 full_name = u"{} {}".format(consumer.first_name, consumer.last_name)
 
                 available_teachers = get_available_teachers()
+                meetings = Meeting.objects.filter(project=project)
+                progress_reports = ProgressReport.objects.filter(project=project)
+                for i in progress_reports:
+                    i.report.link = i.report.name
+                    i.report.name = i.report.name.split('/')
+                    i.report.name = i.report.name[-1]
                 return render(request, 'index.html',
                               {'username': user.username, 'full_name': full_name,
                                'available_teachers': available_teachers,
                                'consumer': consumer, 'project': project, 'group_members': group, 'error': '',
-                               'teachers': teachers})
+                               'teachers': teachers, 'meetings': meetings, 'progress': progress_reports})
         return render(request, 'home.html', )
 
 
@@ -244,10 +255,12 @@ def rejectProject(request, pk):
     return redirect('/')
 
 
-def acceptMeeting(request, pk):
+def acceptMeeting(request, pk, date):
     meeting = Meeting.objects.get(id=pk)
+    meeting.date = date
     meeting.status = 'Approved'
     meeting.save()
+    print('saved')
     messages.add_message(request, messages.SUCCESS, 'the meeting request has been accepted successfully')
     return redirect('/')
 
@@ -263,11 +276,11 @@ def rejectMeeting(request, pk):
 def requestMeeting(request):
     try:
         username = SuperUser.objects.get(username=request.session["username"])
-        date = request.POST.get('date-time')
+        date = request.POST.get('date-time', None)
         student = Student.objects.get(username=username.pk)
         project = Project.objects.get(group_members=student)
         supervisor = project.project_supervisor.all()
-        meeting = Meeting.objects.create(project=project, date=date)
+        meeting = Meeting.objects.create(project=project)
         meeting.project_supervisor.set(supervisor)
         meeting.save()
         messages.add_message(request, messages.SUCCESS, 'Meeting request submitted successfully, wait for your doctor '
