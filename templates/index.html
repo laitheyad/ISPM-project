@@ -424,7 +424,7 @@
             <ul>
                 <li class="active"><a href="#hero"><i class="bx bx-home"></i> <span>Home</span></a></li>
                 <li><a href="#about"><i class="bx bx-book-content"></i> <span>Find Supervisor</span></a></li>
-                {% if project != '' %}
+                {% if project != None %}
 
                     <li><a href="#meeting"><i class="bx bx-file-blank"></i> <span>Request a Meeting</span></a></li>
                     <li><a href="#progress"><i class="bx bx-book-content"></i> Progress report</a></li>
@@ -439,7 +439,7 @@
 <!-- ======= Hero Section ======= -->
 <section id="hero" class="d-flex flex-column justify-content-center align-items-center ml-4 mr-5" >
     <div style="background-color: rgba(255,255,255,0.5);height: 750px;width: 750px;padding: 25px;border-radius: 25px">
-        {% if project != '' %}
+        {% if project != None%}
             <div class="hero-container" data-aos="fade-in">
                 <h1 style="text-decoration: underline"><span class="typed" data-typed-items="{{ project.project_title }}"></span></h1>
             </div>
@@ -562,7 +562,7 @@
 
             </div>
     </section><!-- End About Section -->
-    {% if project != '' %}
+    {% if project != None %}
 
         <!-- ======= meeting Section ======= -->
         <section id="meeting" class="facts">
