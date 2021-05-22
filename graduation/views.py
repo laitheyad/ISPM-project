@@ -73,7 +73,7 @@ def login_View(request):
                 group = project.getGroupeMembers().values()
 
             else:
-                project = ''
+                project = None
                 group = ''
             full_name = u"{} {}".format(consumer.first_name, consumer.last_name)
             request.session["full_name"] = str(full_name)
